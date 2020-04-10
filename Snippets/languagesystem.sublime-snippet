@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>languagesystem</tabTrigger>
+	<scope>source.fea</scope>
+	<description>languagesystem declaration</description>
+	<content><![CDATA[
+languagesystem ${1:DFLT} ${2:dflt};
+]]></content>
+</snippet>
