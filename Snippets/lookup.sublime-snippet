@@ -1,0 +1,10 @@
+<snippet>
+	<tabTrigger>lookup</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Lookup Block</description>
+	<content><![CDATA[
+lookup ${1:lookup_01} {
+	$0
+} ${1};
+]]></content>
+</snippet>

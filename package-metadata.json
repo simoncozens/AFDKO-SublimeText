@@ -1,0 +1,6 @@
+{"version": "1.0.0.", 
+"platforms": ["*"], 
+"url": "http://github.com/simoncozens/AFDKO-SublimeText", 
+"sublime_text": "*", 
+"description": "Syntax and language definitions for Adobe OpenType Feature Files", 
+"dependencies": []}

@@ -1,0 +1,10 @@
+<snippet>
+	<tabTrigger>feature</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Feature Block</description>
+	<content><![CDATA[
+feature ${1:dlig} {
+	$0
+} ${1};
+]]></content>
+</snippet>

@@ -1,0 +1,123 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: AFDKO Feature File
+file_extensions: [fea]
+scope: source.fea
+
+prototype:
+  - include: comments
+
+contexts:
+  comments:
+    - match: "#.*$"
+      scope: comment.fea
+  main:
+    - include: comments
+    - match: \b(table|feature)\b
+      scope: entity.name.fea
+      push: introfeature
+    - match: \b(lookup)\b
+      scope: entity.name.fea
+      push: introlookup
+    - match: languagesystem
+      scope: entity.name.fea
+      push: inlanguagesystem
+  introfeature:
+    - match: " ([a-zA-Z0-9]{4}) *{"
+      captures:
+        1: variable.fea
+      push: infeature
+    - match: "\\s*;"
+      pop: true
+    - match: .
+      scope: invalid.illegal.bad-name
+  introlookup:
+    - match: " (\\w+) *{"
+      captures:
+        1: variable.fea
+      push: infeature
+    - match: "\\s*;"
+      pop: true
+    - match: .
+      scope: invalid.illegal.bad-name
+  infeature:
+    - include: comments
+    - match: position|pos
+      scope: keyword.control.fea
+      push: posrule
+    - match: substitute|sub
+      scope: keyword.control.fea
+      push: subrule
+    - match: "}\\s*(\\1)"
+      captures:
+        1: variable.fea
+      pop: true
+    - match: "}(.*)"
+      scope: invalid.illegal.wrong-end
+      pop: true
+  posrule:
+    - match: ";"
+      pop: true
+    - match: "(base)\\s*"
+      captures:
+        1: keyword.control.fea
+      push: [anchor, glyphorclass]
+    - match: "(mark) (@\\w+)"
+      captures:
+        1: keyword.control.fea
+        2: variable.fea
+    - match: "(mark)\\s*"
+      captures:
+        1: keyword.control.fea
+      push: [anchor, glyphorclass]
+    - match: "(cursive)\\s*"
+      captures:
+        1: keyword.control.fea
+      push: [anchor, anchor, glyphorclass]
+    - include: valuerecord
+  subrule:
+    - match: \s*
+    - match: ";"
+      pop: true
+    - match: (by|from)
+      scope: keyword.control.fea
+  glyphorclass:
+    - match: "[a-zA-Z][\\w\\._]{0,62}\\s*"
+      pop: true
+    - match: "\\.notdef"
+      pop: true
+    - match: "@\\w+\\s*"
+      pop: true
+      scope: variable.fea
+    - match: "\\[\\s*([\\w\\._]{1,63}\\s*)+\\]\\s*"
+      pop: true
+    - match: "."
+      scope: invalid.illegal.glyphname
+  valuerecord:
+    - match: "<-?\\d+\\s+\\-?\\d+\\s+-?\\d+\\s+-?\\d+>"
+      pop: true
+      scope: string
+  anchor:
+    - match: "\\s*<anchor -?\\d+ -?\\d+>"
+      scope: string
+      pop: true
+    - match: "\\s*<anchor -?\\d+ -?\\d+ contourpoint \\d+>"
+      scope: string
+      pop: true
+    - match: "\\s*(<anchor (NULL)>)"
+      captures:
+        1: string.fea
+        2: support.function.construct
+      pop: true
+    - match: "\\s*<anchor \\w+>"
+      scope: string
+      pop: true
+    - match: "."
+      scope: invalid.illegal.anchor
+  inlanguagesystem:
+    - match: "\\s+(DFLT|[a-z]{4}) (dflt|[A-Z]{3});"
+      pop: true
+    - match: ".*"
+      scope: invalid.illegal.languagesystem
+      pop: true

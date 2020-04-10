@@ -1,0 +1,10 @@
+<snippet>
+	<tabTrigger>table</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Table Block</description>
+	<content><![CDATA[
+table ${1:GDEF} {
+	$0
+} ${1};
+]]></content>
+</snippet>
