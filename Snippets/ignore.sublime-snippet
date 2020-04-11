@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>ignore</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Exception to chaining Rule</description>
+	<content><![CDATA[
+ignore sub ${1:prefix} ${2:context}' ${4:suffix};
+]]></content>
+</snippet>

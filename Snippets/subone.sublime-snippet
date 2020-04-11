@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>substitute</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Single substitution rule</description>
+	<content><![CDATA[
+sub ${1:a} by ${2:A.sc};
+]]></content>
+</snippet>

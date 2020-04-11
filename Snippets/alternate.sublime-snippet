@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>subalternate</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Alternate substitution rule</description>
+	<content><![CDATA[
+sub ${1:a} from [${2:a.1 a.2}];
+]]></content>
+</snippet>

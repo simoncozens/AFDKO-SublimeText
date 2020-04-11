@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>markClass</tabTrigger>
+	<scope>source.fea</scope>
+	<description>markClass definition</description>
+	<content><![CDATA[
+markClass [${1:acute grave dieresis}] <anchor ${2:0 0}> @${3:MARK_TOP_ACCENTS};
+]]></content>
+</snippet>

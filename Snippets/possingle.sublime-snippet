@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>pos</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Single Positioning Rule</description>
+	<content><![CDATA[
+pos ${1:glyph} <${2:0 0 0 0}>;
+]]></content>
+</snippet>

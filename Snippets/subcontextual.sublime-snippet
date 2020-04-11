@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>subcontext</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Chaining Contextual Substitution Rule</description>
+	<content><![CDATA[
+sub ${1:prefix} ${2:context}' ${3:lookup Foo} ${4:suffix};
+]]></content>
+</snippet>

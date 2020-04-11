@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>posbase</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Mark-to-Base Positioning Rule</description>
+	<content><![CDATA[
+pos base ${1:glyph} <anchor ${2:0 0}> mark @${3:TOP_MARKS};
+]]></content>
+</snippet>

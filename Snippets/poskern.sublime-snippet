@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>poskern</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Pair Positioning Rule Format B</description>
+	<content><![CDATA[
+pos ${1:A} ${2:V} ${3:-100};
+]]></content>
+</snippet>

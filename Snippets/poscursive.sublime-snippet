@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>poscursive</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Cursive Positioning Rule</description>
+	<content><![CDATA[
+pos cursive ${1:glyph} <anchor ${2:0 0}> <anchor ${3:0 0}>;
+]]></content>
+</snippet>

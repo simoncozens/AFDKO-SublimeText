@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>subligature</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Ligature substitution rule</description>
+	<content><![CDATA[
+sub ${1:f} ${2:i} by ${3:f_i};
+]]></content>
+</snippet>

@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>posmkmk</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Mark-To-Mark Positioning Rule</description>
+	<content><![CDATA[
+pos mark ${1:acute} <anchor ${2:0 0}> mark @${3:TOP_MARKS};
+]]></content>
+</snippet>

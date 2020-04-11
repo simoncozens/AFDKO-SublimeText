@@ -1,0 +1,8 @@
+<snippet>
+	<tabTrigger>poslig</tabTrigger>
+	<scope>source.fea</scope>
+	<description>Ligature Positioning Rule</description>
+	<content><![CDATA[
+pos ligature ${1:f_i} <anchor ${2:0 0}> mark @${3:TOP_MARKS} ligComponent <anchor ${4:0 0}> mark @${5:TOP_MARKS};
+]]></content>
+</snippet>

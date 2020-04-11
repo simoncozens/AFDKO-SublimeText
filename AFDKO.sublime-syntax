@@ -14,15 +14,36 @@ contexts:
       scope: comment.fea
   main:
     - include: comments
-    - match: \b(table|feature)\b
+    - match: \b(table)\b
+      scope: entity.name.fea
+      push: introtable
+    - match: \b(feature)\b
       scope: entity.name.fea
       push: introfeature
     - match: \b(lookup)\b
       scope: entity.name.fea
       push: introlookup
+    - match: \b(markClass)\b
+      scope: entity.name.fea
+      push: [glyphclass, anchor, glyphorclass]
     - match: languagesystem
       scope: entity.name.fea
-      push: inlanguagesystem
+      push: [language, script]
+    - match: "(@\\w+)\\s*=\\s*"
+      scope: variable.fea
+      push: [needsemicolon, glyphorclass]
+    - match: "(include)\\((.*?)\\);"
+      captures:
+        1: entity.name.fea
+  introtable:
+    - match: " (BASE|GDEF|head|hhea|name|OS/2|vhea|vmtx) *{"
+      captures:
+        1: variable.fea
+      push: intable
+    - match: "\\s*;"
+      pop: true
+    - match: .
+      scope: invalid.illegal.bad-name
   introfeature:
     - match: " ([a-zA-Z0-9]{4}) *{"
       captures:
@@ -33,9 +54,10 @@ contexts:
     - match: .
       scope: invalid.illegal.bad-name
   introlookup:
-    - match: " (\\w+) *{"
+    - match: " (\\w+)\\s*(useExtension)?\\s*{"
       captures:
         1: variable.fea
+        2: entity.name.fea
       push: infeature
     - match: "\\s*;"
       pop: true
@@ -43,10 +65,21 @@ contexts:
       scope: invalid.illegal.bad-name
   infeature:
     - include: comments
-    - match: position|pos
+    - match: script
+      scope: keyword.control.fea
+      push: script
+    - match: language
+      scope: keyword.control.fea
+      push: [language_options,language]
+    - match: lookupflag
+      scope: keyword.control.fea
+      push: lookupflag
+    - match: subtable\s*;
+      scope: keyword.control.fea
+    - match: position|\bpos\b
       scope: keyword.control.fea
       push: posrule
-    - match: substitute|sub
+    - match: "(ignore\\s+)?(substitute\\b|\\bsub\\b)"
       scope: keyword.control.fea
       push: subrule
     - match: "}\\s*(\\1)"
@@ -57,12 +90,20 @@ contexts:
       scope: invalid.illegal.wrong-end
       pop: true
   posrule:
+    - include: comments
     - match: ";"
       pop: true
     - match: "(base)\\s*"
       captures:
         1: keyword.control.fea
       push: [anchor, glyphorclass]
+    - match: "(ligature)\\s*"
+      captures:
+        1: keyword.control.fea
+      push: [anchor, glyphorclass]
+    - match: "ligComponent\\s*"
+      scope: keyword.control.fea
+      push: [anchor]
     - match: "(mark) (@\\w+)"
       captures:
         1: keyword.control.fea
@@ -76,29 +117,69 @@ contexts:
         1: keyword.control.fea
       push: [anchor, anchor, glyphorclass]
     - include: valuerecord
+    - match: "\\b(lookup)\\s+(\\w+)"
+      captures:
+        1: keyword.control.fea
+        2: entity.name.fea
+    - match: "[a-zA-Z][\\w\\._]{0,62}'"
+      scope: constant.character
+    - match: "\\.notdef'"
+      scope: constant.character
+    - match: "\\[\\s*([\\w\\._-]{1,63}\\s*)+\\]'"
+      scope: constant.character
+    - match: "@\\w+'"
+      scope: constant.character
+    - match: "[a-zA-Z][\\w\\._]{0,62}"
+    - match: "\\.notdef"
+    - match: "\\[\\s*([\\w\\._-]{1,63}\\s*)+\\]\\s*"
+    - match: "@\\w+\\s*"
+      scope: variable.fea
   subrule:
     - match: \s*
+    - match: \b(by|from)\b
+      scope: keyword.control.fea
     - match: ";"
       pop: true
-    - match: (by|from)
-      scope: keyword.control.fea
+    - match: \s+
+    - match: "\\b(lookup)\\s+(\\w+)"
+      captures:
+        1: keyword.control.fea
+        2: entity.name.fea
+    - match: "[a-zA-Z][\\w\\._]{0,62}'"
+      scope: constant.character
+    - match: "\\.notdef'"
+      scope: constant.character
+    - match: "\\[\\s*([\\w\\._-]{1,63}\\s*)+\\]'"
+      scope: constant.character
+    - match: "@\\w+'"
+      scope: constant.character
+    - match: "[a-zA-Z][\\w\\._]{0,62}"
+    - match: "\\.notdef"
+    - match: "\\[\\s*([\\w\\._-]{1,63}\\s*)+\\]\\s*"
+    - match: "@\\w+\\s*"
+      scope: variable.fea
+  glyphclass:
+    - match: \s+
+    - match: "@\\w+\\s*"
+      pop: true
+      scope: variable.fea
+    - match: "."
+      scope: invalid.illegal.glyphname
   glyphorclass:
+    - match: \s+
     - match: "[a-zA-Z][\\w\\._]{0,62}\\s*"
       pop: true
     - match: "\\.notdef"
       pop: true
-    - match: "@\\w+\\s*"
+    - match: "\\[\\s*([\\w\\._-]{1,63}\\s*@?)+\\]\\s*"
       pop: true
-      scope: variable.fea
-    - match: "\\[\\s*([\\w\\._]{1,63}\\s*)+\\]\\s*"
-      pop: true
-    - match: "."
-      scope: invalid.illegal.glyphname
+    - include: glyphclass
   valuerecord:
     - match: "<-?\\d+\\s+\\-?\\d+\\s+-?\\d+\\s+-?\\d+>"
       pop: true
       scope: string
   anchor:
+    - match: \s+
     - match: "\\s*<anchor -?\\d+ -?\\d+>"
       scope: string
       pop: true
@@ -115,9 +196,109 @@ contexts:
       pop: true
     - match: "."
       scope: invalid.illegal.anchor
-  inlanguagesystem:
-    - match: "\\s+(DFLT|[a-z]{4}) (dflt|[A-Z]{3});"
+  script:
+    - match: \s+
+    - match: "(DFLT|[a-z]{4})"
       pop: true
-    - match: ".*"
-      scope: invalid.illegal.languagesystem
+    - match: "."
+      scope: invalid.illegal.script
+  language:
+    - match: \s+
+    - match: "(dflt|[A-Z]{3})"
+      pop: true
+    - match: "."
+      scope: invalid.illegal.language
+  language_options:
+    - match: \s+
+    - match: "(exclude|include)_dflt\\s*(required)?"
+      scope: keyword.control.fea
+    - match: "required"
+      scope: keyword.control.fea
+    - match: ";"
+      pop: true
+    - match: "."
+      scope: invalid.illegal.languageoptions
+  lookupflag:
+    - match: \s+
+    - match: (RightToLeft|IgnoreBaseGlyphs|IgnoreLigatures|IgnoreMarks)
+      scope: keyword.control.fea
+    - match: (MarkAttachmentType|UseMarkFilteringSet)\s+
+      scope: keyword.control.fea
+      push: glyphclass
+    - match: \d+;
+      pop: true
+    - match: ";"
+      pop: true
+    - match: "."
+      scope: invalid.illegal.lookupflag
+  needsemicolon:
+    - match: \s+
+    - match: ;
+      pop: true
+    - match: "."
+      scope: invalid.illegal.expected-semicolon
+  intable:
+    - include: comments
+    - match: "\\b(Horiz|Vert)Axis.(BaseTagList|BaseScriptList|MinMax)"
+      scope: keyword.control.fea
+    - match: "\\bGlyphClassDef\\s*"
+      scope: keyword.control.fea
+      push: glyphclass
+    - match: "\\bAttach\\s*"
+      scope: keyword.control.fea
+      push: glyphorclass
+    - match: "\\bLigatureCaretBy(Pos|Index)\\s*"
+      scope: keyword.control.fea
+      push: [numbers, glyphorclass]
+    - match: \bFontRevision\s+
+      scope: keyword.control.fea
+      push: [needsemicolon, fontversion]
+    - match: (VertOriginY|VertAdvanceY)\s+
+      scope: keyword.control.fea
+      push: [numbers, glyphorclass]
+    - match: (CaretOffset|Ascender|Descender|LineGap|FSType|Panose|(Vert)?TypoAscender|(Vert)?TypoDescender|(Vert)?TypoLineGap|winAscent|winDescent|XHeight|CapHeight|WeightClass|WidthClass|LowerOpSize|UpperOpSize)\s+
+      scope: keyword.control.fea
+      push: number
+    - match: \bVendor\s+
+      scope: keyword.control.fea
+      push: [string]
+    - match: \bnameid\s+
+      scope: keyword.control.fea
+      push: [string, oneortwonumbers]
+    - match: \s+
+    - match: "}\\s*(\\1)"
+      captures:
+        1: variable.fea
+      pop: true
+    - match: "}(.*)"
+      scope: invalid.illegal.wrong-end
+      pop: true
+  number:
+    - match: \d+;
+      pop: true
+    - match: "."
+      scope: invalid.illegal.expected-number
+  oneortwonumbers:
+    - match: \d+\s+\d+
+      pop: true
+    - match: \d+\s+
+      pop: true
+    - match: "."
+      scope: invalid.illegal.expected-number
+  numbers:
+    - match: \d+
+    - match: \s+
+    - match: ;
+      pop: true
+    - match: "."
+      scope: invalid.illegal.expected-numbers
+  fontversion:
+    - match: \d.\d\d\d
+      pop: true
+    - match: "."
+      scope: invalid.illegal.expected-font-version
+  string:
+    - match: \s+
+    - match: "\".*\""
+      scope: string
       pop: true
